@@ -1,4 +1,4 @@
-# MVerse - MvP Development
+# MVerse - Passport Marketplace
 
 <!-- ## Sample Hardhat Project
 
@@ -51,7 +51,7 @@ npx hardhat console --network localhost
 You must see this:
 ![](readme_images/hardhat_console.png)
 
-## Check contract Owner
+## Check contract Owner address
 
 Execute the following commands in console:
 
@@ -68,7 +68,7 @@ You must see this:
 
 _Note that the address of the owner that will appear must be the Account #0 shown in the screenshot of section **"Running Contracts on a local Hardhat Node"**_
 
-## Mint Tokens with address owner
+## Mint Tokens with Owner address
 
 Execute the following commands in console:
 
@@ -82,9 +82,11 @@ await passport.mintTokens(ids, amounts);
 
 **Note that the array `ids` and `amounts` has two elements**
 
-- The first element of array `ids` we specify the type of $MVerse Tokens, that is 0, and in the second we specify the type of Passport we want to mint, that is Member_Level_1 (with id 1)
+- The first element of array `ids` we specify the type of `$MVerse Tokens`, that is 0, and in the second we specify the type of Passport we want to mint, that is `Member_Level_1` (with id 1)
 
-- The first element of array `amounts` we specify the number of MVerse Tokens we want to mint, and in the second element we specify the amount of Passport of Member-Level-1 we want to mint.
+- The first element of array `amounts` we specify the number of `$MVerse Tokens` we want to mint, and in the second element we specify the amount of Passports of `Member-Level-1` we want to mint.
+
+_Note that by executing these commands as the contract owner, you can mint how many passports you want._
 
 You must see this:
 ![](readme_images/hardhat_mintTokens.png)
@@ -93,7 +95,7 @@ You must see this:
 
 Execute the following commands in console:
 
-`"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"` will be the owner address that we will use here, you need to replace this with the Account #0 address shown in "Running Contracts on a local Hardhat Node" step
+`"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"` will be the owner address that we will use here, you need to replace this with the Account #0 address shown in **"Running Contracts on a local Hardhat Node"** step
 
 ```sh
 await passport.balanceOf("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", 0)
@@ -104,4 +106,70 @@ await passport.balanceOf("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", 1)
 You must see this:
 ![](readme_images/hardhat_check_balance_of_owner.png)
 
-_Note that when we specify the second parameter of balanceOf as 0, it showed us `value: "10000"` and when we specify as 1 it showed us `value: "10"`, this is exactly the values we entered in the "Mint Tokens" step_
+_Note that when we specify the second parameter of balanceOf as 0, it showed us `value: "10000"` and when we specify as 1 it showed us `value: "10"`, this is exactly the values we entered in the **"Mint Tokens"** step_
+
+## Creating a signer
+
+Get the Account #1 address `0x70997970C51812dc3A010C7d01b50e0d17dc79C8` in the **Running Contracts on a local Hardhat Node** step, and execute the following command:
+
+```sh
+const signer = passport.provider.getSigner("0x70997970C51812dc3A010C7d01b50e0d17dc79C8");
+```
+
+You must see this:
+![](readme_images/hardhat_signer.png)
+
+## Using Contract with a Signer
+
+Get the contract address again from **Deploying a Contract** step, in this case `0x70997970C51812dc3A010C7d01b50e0d17dc79C8`, and execute the following command:
+
+```sh
+const passport_signer = await hre.ethers.getContractAt("Passport", "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512", signer);
+```
+
+You must see this:
+![](readme_images/hardhat_passport_signer.png)
+
+## Mint Tokens with the signer address
+
+Defining new valueus for array `ids_2` and `amounts_2`:
+
+- using [0, 3] to ids, with number 3 representing Member_Level_3
+- and [1000, 1] to ammounts, representing 1000 $MVerse Tokens and only one passport Member*Level3. \_Note that we cannot set more than 1 in the second element because the address of signer is not the owner of our contract Passport deployed in the **Deploying contract** step*
+
+```sh
+const ids_2 = [0, 3];
+
+const amounts_2 = [1000, 1];
+
+await passport_signer.connect(signer).mintTokens(ids_2, amounts_2, { value: ethers.utils.parseEther("1.0") });
+```
+
+You must see this:
+![](readme_images/hardhat_mintTokens_signer.png)
+
+## Check balances of tokens in our signer address
+
+Execute the following commands in console:
+
+```sh
+await passport.balanceOf(signer._address, 1)
+
+await passport.balanceOf(signer._address, 0)
+```
+
+You must see this:
+![](readme_images/hardhat_check_balance_of_signer.png)
+
+_Note that when we specify the second parameter of balanceOf as 0, it showed us `value: "1000"` and when we specify as 3 it showed us `value: "1"`, this is exactly the values we entered in the **"Mint Tokens with the signer address"** step_
+
+## Run tests
+
+Execute the following command:
+
+```sh
+npx hardhat test --network localhost
+```
+
+You must see this:
+![](readme_images/hardhat_tests.png)

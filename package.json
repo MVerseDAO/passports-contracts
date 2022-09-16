@@ -7,7 +7,7 @@
     "ethers": "^5.7.0"
   },
   "devDependencies": {
-    "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@openzeppelin/truffle-upgrades": "^1.16.0",
     "chai": "^4.3.6"
   }
 }
