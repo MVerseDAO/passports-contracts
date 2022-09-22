@@ -61,12 +61,12 @@ const passport = await hre.ethers.getContractAt("Passport", "0xe7f1725E7734CE288
 await passport.owner()
 ```
 
-_In the first command above, you need to replace `"0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"` with your Passport contract address shown in the **"Deploying contracts"** step_
+_In the first command above, you need to replace `"0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"` with your Passport contract address shown in the **"Deploying contracts"** step_.
 
 You must see this:
 ![](readme_images/hardhat_owner_address.png)
 
-_Note that the address of the owner that will appear must be the Account #0 shown in the screenshot of section **"Running Contracts on a local Hardhat Node"**_
+_Note that the address of the owner that will appear must be the Account #0 shown in the screenshot of section **"Running Contracts on a local Hardhat Node".**_
 
 ## Mint Tokens with Owner address
 
@@ -80,7 +80,7 @@ const amounts = [10000, 10];
 await passport.mintTokens(ids, amounts);
 ```
 
-**Note that the array `ids` and `amounts` has two elements**
+**Note that the array `ids` and `amounts` must have two elements**
 
 - The first element of array `ids` we specify the type of `$MVerse Tokens`, that is 0, and in the second we specify the type of Passport we want to mint, that is `Member_Level_1` (with id 1)
 
@@ -95,7 +95,7 @@ You must see this:
 
 Execute the following commands in console:
 
-`"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"` will be the owner address that we will use here, you need to replace this with the Account #0 address shown in **"Running Contracts on a local Hardhat Node"** step
+`"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"` will be the owner address that we will use here, you need to replace this with the Account #0 address shown in **"Running Contracts on a local Hardhat Node"** step.
 
 ```sh
 await passport.balanceOf("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", 0)
@@ -106,7 +106,54 @@ await passport.balanceOf("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", 1)
 You must see this:
 ![](readme_images/hardhat_check_balance_of_owner.png)
 
-_Note that when we specify the second parameter of balanceOf as 0, it showed us `value: "10000"` and when we specify as 1 it showed us `value: "10"`, this is exactly the values we entered in the **"Mint Tokens"** step_
+_Note that when we specify the second parameter of balanceOf as 0, it showed us `value: "10000"` and when we specify as 1 it showed us `value: "10"`, this is exactly the values we entered in the **"Mint Tokens"** step._
+
+## Check balance of tokens Minted with Address
+
+After mint the Passport and $MVerse Token in the step above, you can check them by executing the following commands in console (passing through it the address of owner):
+
+```sh
+await passport.balanceOfTokens("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+```
+
+**The portion with yellow color refers to Ids, and the one in red refers to amounts. Both described in the Mint Tokens step.**
+
+You must see this:
+![](readme_images/hardhat_balanceOfAddress.png)
+
+## Check balance of tokens Minted with Address with a specific array Ids
+
+After mint the Passport and $MVerse Token in the step above, you can check them by executing the following commands in console (passing through it the address of owner and the Ids of tokens):
+
+```sh
+const ids = [0, 1];
+
+await passport.balanceOfTokens("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", ids);
+```
+
+**Note that the array `_ids` must have two elements and they must follow the description above in the step of Mint Tokens with Owner address.**
+
+You must see this:
+![](readme_images/hardhat_balanceOfTokens.png)
+
+## Burn Tokens with Owner address
+
+After mint the Passport and $MVerse Token in the step above, you can burn them too by executing the following commands in console:
+
+```sh
+const _ids = [0, 1];
+
+const _amounts = [10000, 10];
+
+await passport.burnTokens(_ids, _amounts);
+```
+
+**Note that the array `_ids` and `_amounts` must have two elements and they are described above in the step of Mint Tokens with Owner address.**
+
+_Note that by executing these commands as the contract owner, you can burn how many passports/tokens you want._
+
+You must see this:
+![](readme_images/hardhat_burnTokens.png)
 
 ## Creating a signer
 
@@ -161,7 +208,7 @@ await passport.balanceOf(signer._address, 0)
 You must see this:
 ![](readme_images/hardhat_check_balance_of_signer.png)
 
-_Note that when we specify the second parameter of balanceOf as 0, it showed us `value: "1000"` and when we specify as 3 it showed us `value: "1"`, this is exactly the values we entered in the **"Mint Tokens with the signer address"** step_
+_Note that when we specify the second parameter of balanceOf as 0, it showed us `value: "1000"` and when we specify as 3 it showed us `value: "1"`, this is exactly the values we entered in the **"Mint Tokens with the signer address"** step._
 
 ## Run tests
 
@@ -173,3 +220,62 @@ npx hardhat test --network localhost
 
 You must see this:
 ![](readme_images/hardhat_tests.png)
+
+# Only Owner Functions
+
+## setRate/getRate of Passports
+
+To change the Rate of Passport you need to execute the following command:
+
+```sh
+await passport.setRate(1, ethers.utils.parseEther('0.999'))
+```
+
+In this case, the first parameter must be the Id of Passport, and the second the new rate.
+
+You can check the if the change was made by executing the following command:
+
+```sh
+await passport.getRate(1)
+```
+
+You must see this:
+![](readme_images/hardhat_setRate_getRate.png)
+
+## setReserved/getReserved: change the Reserved number of Passports to Owner (Manager)
+
+To change the Rate of Passport you need to execute the following command:
+
+```sh
+await passport.setReserved(1, ethers.utils.parseEther('0.999'))
+```
+
+In this case, the first parameter must be the Id of Passport, and the second the new rate.
+
+You can check the if the change was made by executing the following command:
+
+```sh
+await passport.getReserved(1)
+```
+
+You must see this:
+![](readme_images/hardhat_setReserved_getReserved.png)
+
+## setMaxSupply/getMaxSupply: change the Max Supply of Passports or $MVerse Tokens (Manager)
+
+To change the Max Supply of Passport you need to execute the following command:
+
+```sh
+await passport.setMaxSupply(1, 500)
+```
+
+In this case, the first parameter must be the Id of Passport, and the second the new rate.
+
+You can check the if the change was made by executing the following command:
+
+```sh
+await passport.getMaxSupply(1)
+```
+
+You must see this:
+![](readme_images/hardhat_setMaxSupply_getMaxSupply.png)

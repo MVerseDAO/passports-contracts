@@ -15,6 +15,8 @@ async function main() {
   const id_PASSPORT_PRODUCER_LEVEL_3 = 9;
   
   const max_supply_MVERSE_TOKEN = ethers.BigNumber.from('100000000000000000000000');
+  const reserved_MVERSE_TOKEN = ethers.BigNumber.from('25000000000000000000000');
+  
   const max_supply_PASSPORT_MEMBER_LEVEL_1 = 100;
   const max_supply_PASSPORT_MEMBER_LEVEL_2 = 50;
   const max_supply_PASSPORT_MEMBER_LEVEL_3 = 25;
@@ -71,6 +73,7 @@ async function main() {
       id_PASSPORT_PRODUCER_LEVEL_2,
       id_PASSPORT_PRODUCER_LEVEL_3], // ids of Passports
     max_supply_MVERSE_TOKEN,
+    reserved_MVERSE_TOKEN,
     [max_supply_PASSPORT_MEMBER_LEVEL_1,
       max_supply_PASSPORT_MEMBER_LEVEL_2,
       max_supply_PASSPORT_MEMBER_LEVEL_3,
